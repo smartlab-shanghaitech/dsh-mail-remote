@@ -20,9 +20,12 @@ test('defaults to the qq endpoints and read-only permission', () => {
   assert.equal(config.imap.port, 993)
   assert.equal(config.smtp.host, 'smtp.qq.com')
   assert.equal(config.smtp.port, 465)
-  assert.equal(config.permissionPreset, 'read-only')
+  assert.equal(config.permissionPreset, 'workspace-write')
   assert.equal(config.approvalPolicy, 'never')
   assert.equal(config.enabled, false)
+  assert.equal(config.workspaceName, 'remote-dsh')
+  assert.equal(config.attachChangedFiles, true)
+  assert.equal(config.maxAttachmentFiles, 5)
 })
 
 test('rejects an unknown provider', () => {

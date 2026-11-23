@@ -79,6 +79,7 @@ CI（GitHub Actions）在 ubuntu / macos / windows × Node 22/24 上跑单测。
     allowFrom: [you@qq.com]
     subjectToken: "[DSH-7f3a]"
     workdir: ~/DSH-Remote
+    workspaceName: remote-dsh
 ```
 
 授权码不要写进 YAML。放进 0600 文件或用环境变量：
@@ -99,7 +100,7 @@ unset code
 
 - 邮箱类型 / 邮箱地址 / 授权码（或授权码文件路径）
 - 允许的发件人、主题口令
-- 工作目录、权限档、审批策略、轮询间隔、每小时上限
+- 工作目录、工作区名称、权限档、审批策略、轮询间隔、每小时上限
 - 回信、跳过历史邮件、dry-run 开关
 
 保存后写入 profile 的 `cordis.patch.yml` 并热重载插件，下一轮轮询即生效。
@@ -116,12 +117,16 @@ unset code
 | `allowFrom` | — | 允许的发件人**精确地址**列表（不做域名/子串匹配） |
 | `subjectToken` | — | 主题必须包含的口令，如 `[DSH-7f3a]` |
 | `workdir` | `~/DSH-Remote` | 新建会话的工作目录（建议独立目录） |
-| `permissionPreset` | `read-only` | `read-only` 或 `workspace-write`；不会用 `danger-full-access` |
+| `workspaceName` | `remote-dsh` | GUI 里显示的工作区名称；插件会自动注册并把会话挂进去 |
+| `permissionPreset` | `workspace-write` | `workspace-write`（默认，可写工作区）或 `read-only`；不会用 `danger-full-access` |
 | `approvalPolicy` | `never` | `never` = 需要升权的动作直接失败；`ask` 在无人看界面时会挂住 |
 | `pollSeconds` | `60` | 轮询间隔（10–3600） |
 | `maxPerHour` | `6` | 每小时最多执行次数 |
 | `maxBodyChars` | `4000` | 交给模型的正文上限 |
 | `replyEnabled` | `true` | 是否回信 |
+| `attachChangedFiles` | `true` | 把本次任务期间在 `workdir` 里新建/修改的文件作为附件回信 |
+| `maxAttachmentFiles` | `5` | 单封回信最多附件个数 |
+| `maxAttachmentBytes` | `10485760` | 单个附件大小上限（字节，默认 10MB） |
 | `dryRun` | `false` | 只判定不执行、不回信 |
 | `mailbox` | `INBOX` | 信箱 |
 | `imap` / `smtp` | provider 预设 | `{host, port, secure}` |
@@ -141,6 +146,8 @@ unset code
 ## 安全模型（请先读）
 
 - **能往这个邮箱发信的人 ≈ 能在你电脑上跑一轮任务的人**。所以：用独立邮箱、精确白名单、主题口令、限频，别用主邮箱。
+- 默认权限档是 `workspace-write`：会话可以改 `workdir` 里的文件，但沙箱仍只限制文件写入，读取与网络不受限（这是 DSH 沙箱的语义）。
+- 回信附件只从 `workdir` 里**本次任务期间改动过**的普通文件里挑，跳过隐藏文件、`node_modules`、`.git` 等，并受个数/大小上限约束。
 - 沙箱只管文件写入，网络与读取不受限；`read-only` 不是"安全模式"，只是"不可写模式"。
 - 无人值守时审批不能挂在 `ask`：插件把会话钉在 `never`，需要升权的动作会失败（可在回信里看到失败原因）。
 - 回信带 `X-DSH-Auto-Reply: 1`，插件会跳过带该标记的信，防止自动回复循环。
