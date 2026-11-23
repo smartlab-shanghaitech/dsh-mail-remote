@@ -2,7 +2,7 @@ import test from 'node:test'
 import assert from 'node:assert/strict'
 import { chmodSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
-import { join } from 'node:path'
+import { join, sep } from 'node:path'
 import { normalizeConfig } from '../lib/config.js'
 
 function tempPassFile(content) {
@@ -26,7 +26,7 @@ test('defaults to the qq endpoints and read-only permission', () => {
   assert.equal(config.workspaceName, 'remote-dsh')
   assert.equal(config.attachChangedFiles, true)
   assert.ok(config.attachmentRoots.includes(config.workdir))
-  assert.ok(config.attachmentRoots.some((root) => root.endsWith('/Desktop')))
+  assert.ok(config.attachmentRoots.some((root) => root.endsWith(`${sep}Desktop`)))
   assert.equal(config.maxAttachmentFiles, 5)
 })
 
