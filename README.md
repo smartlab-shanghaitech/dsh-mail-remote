@@ -162,6 +162,12 @@ node bin/cli.js send-test --config dev/config.local.json   # 给自己发一封�
 
 `poll --dry-run` 不执行、不回信、不推进游标，用来验证 QQ 授权码、IMAP ID、白名单与口令是否正确。
 
+## 排错
+
+- `~/.dsh/mail-remote/diag.json`：插件心跳。`status: active` 表示已加载，`polling` 表示每轮在跑，`error` 会带错误信息（本次排查就是靠它定位到状态文件路径 bug）。
+- `~/.dsh/mail-remote/state.json`：UID 游标、已处理 Message-ID、线程→sessionId 映射。
+- 改了插件代码后如果发现不再轮询，重启一次 DSH（Host 插件不是所有改动都能热重载）。
+
 ## 测试
 
 ```bash
