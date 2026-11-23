@@ -1,6 +1,6 @@
 {
   "name": "dsh-mail-remote",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "通过邮件远程驱动 DSH：收信 -> 起/续会话 -> 回信。纯 Node，macOS / Windows 通用。",
   "type": "module",
   "main": "lib/index.js",
