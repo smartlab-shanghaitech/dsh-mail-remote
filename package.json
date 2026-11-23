@@ -1,0 +1,69 @@
+{
+  "name": "dsh-mail-remote",
+  "version": "0.1.0",
+  "description": "通过邮件远程驱动 DSH：收信 -> 起/续会话 -> 回信。纯 Node，macOS / Windows 通用。",
+  "type": "module",
+  "main": "lib/index.js",
+  "exports": {
+    ".": "./lib/index.js",
+    "./cordis.patch.yml": "./cordis.patch.yml",
+    "./package.json": "./package.json",
+    "./client": "./lib/client.js"
+  },
+  "files": [
+    "lib",
+    "bin",
+    "cordis.patch.yml",
+    "README.md"
+  ],
+  "keywords": [
+    "dsh-plugin",
+    "deepseek-harness",
+    "dsh",
+    "email",
+    "remote",
+    "imap",
+    "smtp"
+  ],
+  "license": "MIT",
+  "engines": {
+    "node": ">=22.12.0",
+    "dsh": ">=0.2.1-rc.3"
+  },
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "client": {
+      "platform": "web"
+    }
+  },
+  "dependencies": {
+    "@deepseek-ai/schemastery": "^3.18.3",
+    "html-to-text": "^10.0.1",
+    "imapflow": "^2.2.1",
+    "mailparser": "^3.9.33",
+    "nodemailer": "^10.0.13"
+  },
+  "scripts": {
+    "test": "node --test test/*.test.js",
+    "check": "node bin/cli.js check",
+    "poll:dry": "node bin/cli.js poll --once --dry-run"
+  },
+  "bin": {
+    "dsh-mail-remote": "./bin/cli.js"
+  },
+  "devDependencies": {
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1"
+  },
+  "author": "SmartLab, ShanghaiTech University",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/smartlab-shanghaitech/dsh-mail-remote.git"
+  },
+  "homepage": "https://github.com/smartlab-shanghaitech/dsh-mail-remote#readme",
+  "bugs": {
+    "url": "https://github.com/smartlab-shanghaitech/dsh-mail-remote/issues"
+  }
+}

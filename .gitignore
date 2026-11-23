@@ -1,0 +1,25 @@
+node_modules/
+.npm-cache/
+.pnpm-home/
+.pnpm-store/
+.DS_Store
+
+# Local configuration and secrets: never commit these.
+dev/config.local.json
+*.local.json
+*.secret
+*.pass
+*.env
+
+# Local test/debug residue (DSH homes, state files, workdirs, backups).
+.dsh-test-home/
+.dsh-test-web/
+dev/workdir/
+dev/state*.json
+backups/
+*.tgz
+*.log
+
+# Editor/OS noise
+.idea/
+.vscode/
