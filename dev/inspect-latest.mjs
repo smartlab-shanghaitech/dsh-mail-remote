@@ -31,6 +31,7 @@ try {
     console.log(`messageId=${mail.messageId}`)
     console.log(`inReplyTo=${mail.inReplyTo}  references=${mail.references.join(' ')}`)
     console.log(`X-DSH-Auto-Reply=${mail.headers['x-dsh-auto-reply'] ?? '(none)'}  Auto-Submitted=${mail.headers['auto-submitted'] ?? '(none)'}`)
+    console.log(`messageId=${mail.messageId}`)
     console.log(`attachments=${mail.attachmentCount}${mail.attachmentCount ? ` (${mail.attachmentNames.join(', ')})` : ''}`)
     console.log(`body: ${mail.body.replace(/\s+/g, ' ').slice(0, 300)}`)
   }

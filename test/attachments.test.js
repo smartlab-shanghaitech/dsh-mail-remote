@@ -52,3 +52,30 @@ test('skips empty files', async () => {
     rmSync(dir, { recursive: true, force: true })
   }
 })
+
+test('extractAttachmentMarkers pulls marker lines out of the reply', async () => {
+  const { extractAttachmentMarkers } = await import('../lib/attachments.js')
+  const result = extractAttachmentMarkers('已复制。\n[ATTACH: /tmp/a.pdf]\n[attach: /tmp/b.png]\n完成')
+  assert.equal(result.paths.length, 2)
+  assert.deepEqual(result.paths, ['/tmp/a.pdf', '/tmp/b.png'])
+  assert.ok(!result.text.includes('ATTACH'))
+  assert.ok(result.text.includes('已复制'))
+})
+
+test('explicit attachments are limited to the allowed roots', async () => {
+  const { collectExplicitAttachments } = await import('../lib/attachments.js')
+  const root = mkdtempSync(join(tmpdir(), 'dsh-mail-root-'))
+  const outside = mkdtempSync(join(tmpdir(), 'dsh-mail-outside-'))
+  try {
+    writeFileSync(join(root, 'ok.txt'), 'ok')
+    writeFileSync(join(outside, 'secret.txt'), 'secret')
+    const allowed = await collectExplicitAttachments([join(root, 'ok.txt')], { roots: [root] })
+    assert.equal(allowed.length, 1)
+    assert.equal(allowed[0].filename, 'ok.txt')
+    const rejected = await collectExplicitAttachments([join(outside, 'secret.txt')], { roots: [root] })
+    assert.equal(rejected.length, 0)
+  } finally {
+    rmSync(root, { recursive: true, force: true })
+    rmSync(outside, { recursive: true, force: true })
+  }
+})

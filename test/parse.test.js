@@ -1,6 +1,6 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { cleanBody, parseMail, replyTextOf, subjectHasToken, taskTextOf, threadKeyOf } from '../lib/parse.js'
+import { cleanBody, parseMail, replyTextOf, subjectHasToken, subjectThreadKey, taskTextOf, threadKeyOf } from '../lib/parse.js'
 
 const RAW = [
   'From: =?UTF-8?B?5p2O6ZSQ5Liw?= <alice@example.com>',
@@ -66,6 +66,11 @@ test('threadKeyOf prefers the References root', () => {
     fromAddress: 'a@b.com',
   }
   assert.equal(threadKeyOf(mail, '[DSH-7f3a]'), 'ref:<root@example.com>')
+})
+
+test('subjectThreadKey ignores Re/Fwd prefixes and the token', () => {
+  const mail = { subject: 'Re: [DSH-7f3a] 文件回传测试', fromAddress: 'A@B.com' }
+  assert.equal(subjectThreadKey(mail, '[DSH-7f3a]'), 'subj:文件回传测试|a@b.com')
 })
 
 test('threadKeyOf gives the opening mail and its reply the same key', () => {

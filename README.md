@@ -126,6 +126,7 @@ unset code
 | `replyEnabled` | `true` | 是否回信 |
 | `attachChangedFiles` | `true` | 把本次任务期间在 `workdir` 里新建/修改的文件作为附件回信 |
 | `maxAttachmentFiles` | `5` | 单封回信最多附件个数 |
+| `attachmentRoots` | `~/Desktop`、`~/Documents`、`~/Downloads`、工作区 | 允许显式回传的目录白名单（工作区始终允许） |
 | `maxAttachmentBytes` | `10485760` | 单个附件大小上限（字节，默认 10MB） |
 | `dryRun` | `false` | 只判定不执行、不回信 |
 | `mailbox` | `INBOX` | 信箱 |
@@ -168,6 +169,28 @@ node bin/cli.js send-test --config dev/config.local.json   # 给自己发一封�
 ```
 
 `poll --dry-run` 不执行、不回信、不推进游标，用来验证 QQ 授权码、IMAP ID、白名单与口令是否正确。
+
+## 回传工作区之外的文件
+
+除了自动收集工作区内本次改动的文件，还可以让 agent 显式指定任意本地文件：在最终回答里单独写一行
+
+```
+[ATTACH: /Users/you/Desktop/论文写作/HW1.docx]
+```
+
+插件会把这行从回信正文里去掉，并把文件作为附件附上。为了不让被遥控的会话顺手把密钥传出去，显式附件只允许
+`attachmentRoots` 里的目录（默认 Desktop / Documents / Downloads，工作区始终允许），并受个数和大小限制；
+隐藏目录（`~/.ssh`、`~/.dsh` 等）之外的文件不会被读取。
+
+任务里这样写即可：
+
+> 把 /Users/you/Desktop/论文写作/HW1.docx 回传给我，最终回答单独写一行 `[ATTACH: 绝对路径]`
+
+## 线程与续跑
+
+- 回信带 `In-Reply-To` / `References`，直接回复 agent 的回信就会续上同一会话。
+- 即使某些客户端把 `References` 截断成只指向 agent 的回信，插件也会用「规范化主题 + 发件人」回退匹配，
+  仍然落到同一会话，不会另开一段。
 
 ## 排错
 

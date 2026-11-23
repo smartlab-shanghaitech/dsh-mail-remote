@@ -25,6 +25,8 @@ test('defaults to the qq endpoints and read-only permission', () => {
   assert.equal(config.enabled, false)
   assert.equal(config.workspaceName, 'remote-dsh')
   assert.equal(config.attachChangedFiles, true)
+  assert.ok(config.attachmentRoots.includes(config.workdir))
+  assert.ok(config.attachmentRoots.some((root) => root.endsWith('/Desktop')))
   assert.equal(config.maxAttachmentFiles, 5)
 })
 
